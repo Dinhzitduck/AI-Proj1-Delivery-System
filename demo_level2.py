@@ -1,5 +1,5 @@
 import demo_level1 as lv1
-import numpy as np
+
 def create_weight_array(array):
     weighted_edges = set()
     
