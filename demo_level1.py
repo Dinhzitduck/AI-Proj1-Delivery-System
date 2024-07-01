@@ -214,6 +214,3 @@ array = [['S', '-1','-1', '0'],
          ['0', '0','0', '0'],
          ['0', '0','0', '0'],
          ['0', '-1','-1', 'G']]
-path, cost = astar(array)
-
-print(f'Path is {path} with the cost of {cost}')
