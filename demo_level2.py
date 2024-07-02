@@ -20,39 +20,40 @@ def UCS_level_2(array, t):
     start = lv1.find_start(array)
     goal = lv1.find_goal(array)
     edges = create_weight_array(array)
-    pq = [(0, start, [])]
-    visited = set()
+    pq = [(0, 0, start, [])]  # (cost, edge_count, current, path)
+    visited = {}
     
     while pq:
-        cost, current, path = lv1.heapq.heappop(pq)
+        cost, edge_count, current, path = lv1.heapq.heappop(pq)
         
-        if current in visited:
+        if current in visited and visited[current] <= (cost, edge_count):
             continue
         
         path = path + [current]
-        visited.add(current)
+        visited[current] = (cost, edge_count)
+        
         if current == goal:
             if cost <= t:
-                return path, cost
+                return path, cost, edge_count
             else:
-                return f"Doesn't exist a path that the car can go within {t} minute(s)", None
+                return f"Doesn't exist a path that the car can go within {t} minute(s)", None, None
         
         for edge in edges:
             if edge.vertex1 == current and edge.vertex2 not in visited:
-                lv1.heapq.heappush(pq, (cost + edge.weight, edge.vertex2, path))
+                lv1.heapq.heappush(pq, (cost + edge.weight, edge_count + 1, edge.vertex2, path))
             elif edge.vertex2 == current and edge.vertex1 not in visited:
-                lv1.heapq.heappush(pq, (cost + edge.weight, edge.vertex1, path))
+                lv1.heapq.heappush(pq, (cost + edge.weight, edge_count + 1, edge.vertex1, path))
 
-    return "Doesn't exist a path", None
+    return "Doesn't exist a path", None, None
 
 
-array = [['S', '-1','-1', '0'],
-         ['0', '10','0', '0'],
-         ['0', '10','0', '0'],
-         ['0', '-1','-1', 'G']]
+array = [['S', '2','0', '0'],
+         ['0', '-1','0', '0'],
+         ['0', '-1','0', 'G'],
+         ['0', '0','0', '0']]
 
     
-path, cost = UCS_level_2(array,10)
+path, cost, n_edge = UCS_level_2(array,10)
 if(cost is not None):
-    print(f'Path is {path} with the cost of {cost}')
+    print(f'Path is {path} with the cost of {cost}, going through {n_edge} tiles.')
 else: print(path)
