@@ -155,26 +155,33 @@ def UCS(array):
     goal = find_goal(array)
     edges = create_random_weight_array(array)
     pq = [(0, start, [])]
-    visited = set()
+    visited = {}
     
     while pq:
         cost, current, path = heapq.heappop(pq)
         
-        if current in visited:
+        if current in visited and visited[current] <= cost:
             continue
         
         path = path + [current]
-        visited.add(current)
+        visited[current] = cost
         
         if current == goal:
             return path, cost
         
         for edge in edges:
-            if edge.vertex1 == current and edge.vertex2 not in visited:
-                heapq.heappush(pq, (cost + edge.weight, edge.vertex2, path))
-            elif edge.vertex2 == current and edge.vertex1 not in visited:
-                heapq.heappush(pq, (cost + edge.weight, edge.vertex1, path))
-    return "Doesn't exist a path", None    
+            if edge.vertex1 == current:
+                new_node = edge.vertex2
+                new_cost = cost + edge.weight
+                if new_node not in visited or new_cost < visited[new_node]:
+                    heapq.heappush(pq, (new_cost, new_node, path))
+            elif edge.vertex2 == current:
+                new_node = edge.vertex1
+                new_cost = cost + edge.weight
+                if new_node not in visited or new_cost < visited[new_node]:
+                    heapq.heappush(pq, (new_cost, new_node, path))
+    return "Doesn't exist a path", None   
+ 
 def astar(array):
     start = find_start(array)
     goal = find_goal(array)
@@ -210,7 +217,4 @@ def astar(array):
                     heapq.heappush(pq, (f_cost, next_g_cost, neighbor, path))
     
     return "Doesn't exist a path", None
-array = [['S', '-1','-1', '0'],
-         ['0', '0','0', '0'],
-         ['0', '0','0', '0'],
-         ['0', '-1','-1', 'G']]
+
